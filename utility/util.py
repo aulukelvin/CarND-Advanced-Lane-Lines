@@ -244,7 +244,6 @@ def fitlines(binary_warped, pri_left_fitx, pri_right_fitx):
             if len(rightx)<2000:
                 print('set right lane lines to the left one')
                 right_fitx = left_fitx + max(distance, 750)
-                print(right_fitx[719], ' - ', left_fitx[719])
     else:
         if len(rightx)<5000:
             print('restore the lane lines to the previous ones')
