@@ -22,19 +22,40 @@ The goals / steps of this project are the following:
 [video1]: ./project_video.mp4 "Video"
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
-###Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
+Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
 
 ---
-###Writeup / README
+### Code structure
 
-####1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  [Here](https://github.com/udacity/CarND-Advanced-Lane-Lines/blob/master/writeup_template.md) is a template writeup for this project you can use as a guide and a starting point.  
+|  Path  | Description  |
+|---|---|
+| /README.md  | writeup  |
+| /CarND_Advanced_lane_finder.ipynb  | the main notebook  |
+| /camera_cal  | Camera calibration images  |
+| /images  | screenshots from vidoes |
+| /output_images  | images for the writeup |
+| /test_images | color, sobel, magnitude filters testing images |
+| /utility/util.py | the lib for this project, contains common functions |
+| /videos | the testing videos |
+| /videos_out | the processed video, only the project_out.mp4 has been uploaded |
+### Camera calibration
+For extracting lane lines that bend it is crucial to work with images that are distortion corrected. Non image-degrading abberations such as pincussion/barrel distortion can easily be corrected using test targets. Samples of chessboard patterns recorded with the same camera that was also used for recording the video are provided in the `camera_cal` folder. 
+The code for distortion correction is contained in IPython notebook located in "./stage0_camera_calibration.ipynb" .  
 
-You're reading it!
-###Camera Calibration
+We start by preparing "object points", which are (x, y, z) coordinates of the chessboard corners in the world (assuming coordinates such that z=0).  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
 
-####1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
+`objpoints` and `imgpoints` are then used to compute the camera calibration and distortion coefficients using the `cv2.calibrateCamera()` function. I applied this distortion correction to the test image using the `cv2.undistort()` function and obtained this result: 
+![Undistort][image1]### Distortion-corrected image
+### Thresholded binary image.
+### Perspective transformation
+### Detect lane pixels and fit to find the lane boundary
+### Determine the curvature of the lane and vehicle position with respect to center
+### Warp the detected lane boundaries back onto the original image
+### Output visual display of the lane boundaries and numerical estimation of lane curvature and vehicle position
+### Conclusion
+This project involves lot of parameter tuning, trial and error. There're load of idea to try but limited by time I only tried a few of them. During the project I firstly selected a image as the target and tuned all the parameter to make it works better on the chosen image. But I quickly found out this doesn't garentee the settings can also be the optimum for other scenarios. Just for example, the sliding window method doesn't work well when there're more than one lines close to each other; the color threshold can't pick up the lines if the lighting has changed or if the lane line color is different; and the model has problem dealing with very curly lanes and the uphill, downhill road. To make the model more robust, I use the difficult scenario images to further tune the parameters. I found out it can help improve the model but still, it is very hard to generalize the model to cover all scenarios.
 
-The code for this step is contained in the first code cell of the IPython notebook located in "./examples/example.ipynb" (or in lines # through # of the file called `some_file.py`).  
+I'm also curious about how these optical detected lane lines can be used in a real self driving car. There're many many situations in which lane line detection is not useful, for example, when the lanes are merge or branching, or when the lane lines are worn off, incorrect or even no lane lines at all. 
 
 I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
 
@@ -44,10 +65,10 @@ I then used the output `objpoints` and `imgpoints` to compute the camera calibra
 
 ###Pipeline (single images)
 
-####1. Provide an example of a distortion-corrected image.
+#### 1. Provide an example of a distortion-corrected image.
 To demonstrate this step, I will describe how I apply the distortion correction to one of the test images like this one:
 ![alt text][image2]
-####2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
+####2. Apply a distortion correction to raw images.
 I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines # through # in `another_file.py`).  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
 
 ![alt text][image3]
